@@ -55,8 +55,9 @@ for (let i = 0; i < marbleCount; i++) {
   marble.style.height = `${size}px`;
   //   marble.style.backgroundImage = `url(${marbleColorRandomizer}_marble.png)`;
   //   marble.style.backgroundSize = "100% 100%";
+  marble.style.backgroundColor = marbleColorRandomizer;
   marble.innerText = i;
-  console.log(posX, posY);
+  console.log(posX, posY, i, marbleColorRandomizer);
   gsap.set(marble, { x: posX, y: posY });
   const dX = gsap.utils.random(-3, 3);
   const dY = gsap.utils.random(1, 3);
@@ -239,7 +240,7 @@ function animateCircles() {
   //   }
 }
 
-gsap.ticker.add(animateCircles);
+// gsap.ticker.add(animateCircles);
 gsap.ticker.fps(15);
 
 function rectOverlap(rect1, rect2) {

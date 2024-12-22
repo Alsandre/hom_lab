@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="index.css" />
+    <style>
+      body,
+      html {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+      .container {
+        position: relative;
+      }
+      .circle {
+        top: 0;
+        left: 0;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        position: absolute;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -12,6 +33,92 @@
       <div id="circle2" class="circle"></div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-    <script src="index.js" defer></script>
+    <script>
+      const marbleCount = 4;
+      const marbleSizeRange = { min: 40, max: 100 };
+      const container = document.querySelector(".container");
+
+      // const circle1 = document.getElementById("circle1");
+      // const circle2 = document.getElementById("circle2");
+
+      // // Initial positions and velocities
+      // gsap.set(circle1, { x: 0, y: 200 });
+      // gsap.set(circle2, { x: 500, y: 200 });
+
+      // // Properties
+      // const circles = [
+      //   { el: circle1, dx: 3, dy: 3, mass: 2, gravity: 0.1, drag: 0.99 },
+      //   { el: circle2, dx: -3, dy: 3, mass: 3, gravity: 0.1, drag: 0.99 },
+      // ];
+      const marbles = [];
+      for (let i = 0; i < marbleCount; i++) {
+        const marble = document.createElement("div");
+        const size = Math.floor(
+          gsap.utils.random(marbleSizeRange.min, marbleSizeRange.max)
+        );
+        const marbleColorRandomizer = gsap.utils.random([
+          "blue",
+          "green",
+          "yellow",
+          "red",
+        ]);
+        // const posX = Math.floor(gsap.utils.random(0, 500));
+        // const posY = Math.floor(gsap.utils.random(0, 50));
+        let posX, posY;
+        let overlap = true;
+        while (overlap) {
+          posX = Math.floor(gsap.utils.random(10, 500));
+          posY = Math.floor(gsap.utils.random(10, 50));
+
+          overlap = false;
+          for (let j = 0; j < marbles.length; j++) {
+            const other = marbles[j];
+            const otherRect = other.el.getBoundingClientRect();
+            const currentRect = {
+              left: posX,
+              top: posY,
+              right: posX + size,
+              bottom: posY + size,
+            };
+
+            if (rectOverlap(currentRect, otherRect)) {
+              overlap = true;
+              break;
+            }
+          }
+        }
+        marble.style.width = `${size}px`;
+        marble.style.height = `${size}px`;
+        marble.className = "circle";
+        //   marble.style.backgroundImage = `url(${marbleColorRandomizer}_marble.png)`;
+        //   marble.style.backgroundSize = "100% 100%";
+        marble.style.backgroundColor = marbleColorRandomizer;
+        marble.innerText = i;
+        console.log("x-", posX, "y-", posY, i, marbleColorRandomizer);
+        gsap.set(marble, { x: posX, y: posY });
+        const dX = gsap.utils.random(-3, 3);
+        const dY = gsap.utils.random(1, 3);
+        const marbleObj = {
+          el: marble,
+          dx: dX,
+          dy: dY,
+          mass: 3,
+          gravity: 0.5,
+          drag: 0.99,
+        };
+        marbles.push(marbleObj);
+        container.appendChild(marble);
+      }
+
+      function rectOverlap(rect1, rect2) {
+        return !(
+          rect1.right < rect2.left ||
+          rect1.left > rect2.right ||
+          rect1.bottom < rect2.top ||
+          rect1.top > rect2.bottom
+        );
+      }
+    </script>
+    <!-- <script src="index.js" defer></script> -->
   </body>
 </html>
