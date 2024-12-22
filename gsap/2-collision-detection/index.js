@@ -1,90 +1,120 @@
 const circle1 = document.getElementById("circle1");
 const circle2 = document.getElementById("circle2");
 
+// Initial positions and velocities
 gsap.set(circle1, { x: 0, y: 200 });
 gsap.set(circle2, { x: 500, y: 200 });
 
-const speed = 3;
-let dx1 = speed,
-  dy1 = speed;
-let dx2 = -speed,
-  dy2 = speed;
-const buffer = 2;
+// Properties
+const circles = [
+  { el: circle1, dx: 3, dy: 3, mass: 2, gravity: 0.1, drag: 0.99 },
+  { el: circle2, dx: -3, dy: 3, mass: 3, gravity: 0.1, drag: 0.99 },
+];
+
+const buffer = 0.2;
+const collisionBuffer = 5;
 
 function animateCircles() {
-  const rect1 = circle1.getBoundingClientRect();
-  const rect2 = circle2.getBoundingClientRect();
   const container = document.documentElement;
 
-  // Move circles
-    gsap.set(circle1, { x: "+=" + dx1, y: "+=" + dy1 });
-    gsap.set(circle2, { x: "+=" + dx2, y: "+=" + dy2 });
+  circles.forEach((circle) => {
+    const rect = circle.el.getBoundingClientRect();
 
-  // Screen boundary collision with buffer
-  if (rect1.left <= 0) {
-    dx1 = Math.abs(dx1);
-    gsap.set(circle1, { x: buffer });
-  }
-  if (rect1.right >= container.clientWidth) {
-    dx1 = -Math.abs(dx1);
-    gsap.set(circle1, { x: container.clientWidth - rect1.width - buffer });
-  }
-  if (rect1.top <= 0) {
-    dy1 = Math.abs(dy1);
-    gsap.set(circle1, { y: buffer });
-  }
-  if (rect1.bottom >= container.clientHeight) {
-    dy1 = -Math.abs(dy1);
-    gsap.set(circle1, { y: container.clientHeight - rect1.height - buffer });
-  }
+    // Apply gravity
+    circle.dy += circle.gravity;
 
-  if (rect2.left <= 0) {
-    dx2 = Math.abs(dx2);
-    gsap.set(circle2, { x: buffer });
-  }
-  if (rect2.right >= container.clientWidth) {
-    dx2 = -Math.abs(dx2);
-    gsap.set(circle2, { x: container.clientWidth - rect2.width - buffer });
-  }
-  if (rect2.top <= 0) {
-    dy2 = Math.abs(dy2);
-    gsap.set(circle2, { y: buffer });
-  }
-  if (rect2.bottom >= container.clientHeight) {
-    dy2 = -Math.abs(dy2);
-    gsap.set(circle2, { y: container.clientHeight - rect2.height - buffer });
-  }
+    // Apply drag to reduce velocity over time
+    circle.dx *= circle.drag;
+    circle.dy *= circle.drag;
 
-  // Circle collision detection with buffer
-  const collisionBuffer = 5; // Small buffer to avoid circle sticking on collision
+    // Move circles
+    gsap.set(circle.el, { x: "+=" + circle.dx, y: "+=" + circle.dy });
 
-  // Circle collision detection with buffer
-  const dx = rect1.left + rect1.width / 2 - (rect2.left + rect2.width / 2);
-  const dy = rect1.top + rect1.height / 2 - (rect2.top + rect2.height / 2);
+    // Screen boundary collision
+    if (rect.left <= 0) {
+      circle.dx = Math.abs(circle.dx);
+      gsap.set(circle.el, { x: buffer });
+    }
+    if (rect.right >= container.clientWidth) {
+      circle.dx = -Math.abs(circle.dx);
+      gsap.set(circle.el, {
+        x: container.clientWidth - rect.width - buffer,
+      });
+    }
+    if (rect.top <= 0) {
+      circle.dy = Math.abs(circle.dy);
+      gsap.set(circle.el, { y: buffer });
+    }
+    if (rect.bottom >= container.clientHeight) {
+      if (Math.abs(circle.dy) < 0.5) {
+        circle.dy = 0;
+        gsap.set(circle.el, {
+          y: container.clientHeight - rect.height - buffer,
+        });
+      } else {
+        circle.dy = -Math.abs(circle.dy) * 0.8;
+        gsap.set(circle.el, {
+          y: container.clientHeight - rect.height - buffer,
+        });
+      }
+    }
+  });
+
+  // Collision detection between circles
+  const dx =
+    circles[0].el.getBoundingClientRect().left +
+    50 -
+    (circles[1].el.getBoundingClientRect().left + 50);
+  const dy =
+    circles[0].el.getBoundingClientRect().top +
+    50 -
+    (circles[1].el.getBoundingClientRect().top + 50);
   const distance = Math.sqrt(dx * dx + dy * dy);
   const minDistance = 100 + collisionBuffer;
-  console.log(distance);
-  //   if (distance < minDistance) {
-  //     const overlap = minDistance - distance;
-  //     const angle = Math.atan2(dy, dx);
-  //     const moveX = (Math.cos(angle) * overlap) / 2;
-  //     const moveY = (Math.sin(angle) * overlap) / 2;
 
-  //     gsap.set(circle1, { x: "+=" + moveX, y: "+=" + moveY });
-  //     gsap.set(circle2, { x: "-=" + moveX, y: "-=" + moveY });
+  if (distance < minDistance) {
+    const angle = Math.atan2(dy, dx);
+    const sin = Math.sin(angle);
+    const cos = Math.cos(angle);
 
-  //     dx1 = -dx1;
-  //     dy1 = -dy1;
-  //     dx2 = -dx2;
-  //     dy2 = -dy2;
+    // Rotate circle positions
+    let v1 = {
+      x: cos * circles[0].dx + sin * circles[0].dy,
+      y: cos * circles[0].dy - sin * circles[0].dx,
+    };
+    let v2 = {
+      x: cos * circles[1].dx + sin * circles[1].dy,
+      y: cos * circles[1].dy - sin * circles[1].dx,
+    };
 
-  //     circle1.style.backgroundColor = "green";
-  //     circle2.style.backgroundColor = "green";
-  //   } else {
-  //     circle1.style.backgroundColor = "red";
-  //     circle2.style.backgroundColor = "blue";
-  //   }
+    // Calculate final velocities using 1D elastic collision formula
+    let v1Final =
+      ((circles[0].mass - circles[1].mass) * v1.x +
+        2 * circles[1].mass * v2.x) /
+      (circles[0].mass + circles[1].mass);
+    let v2Final =
+      ((circles[1].mass - circles[0].mass) * v2.x +
+        2 * circles[0].mass * v1.x) /
+      (circles[0].mass + circles[1].mass);
+
+    v1.x = v1Final;
+    v2.x = v2Final;
+
+    // Rotate back
+    circles[0].dx = cos * v1.x - sin * v1.y;
+    circles[0].dy = cos * v1.y + sin * v1.x;
+    circles[1].dx = cos * v2.x - sin * v2.y;
+    circles[1].dy = cos * v2.y + sin * v2.x;
+
+    // Slight separation to avoid sticking
+    const overlap = minDistance - distance;
+    const moveX = (Math.cos(angle) * overlap) / 2;
+    const moveY = (Math.sin(angle) * overlap) / 2;
+
+    gsap.set(circle1, { x: "+=" + moveX, y: "+=" + moveY });
+    gsap.set(circle2, { x: "-=" + moveX, y: "-=" + moveY });
+  }
 }
 
 gsap.ticker.add(animateCircles);
-gsap.ticker.fps(3)
+gsap.ticker.fps(45);
