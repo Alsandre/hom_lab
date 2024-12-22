@@ -118,3 +118,4 @@ function animateCircles() {
 
 gsap.ticker.add(animateCircles);
 gsap.ticker.fps(45);
+ 
