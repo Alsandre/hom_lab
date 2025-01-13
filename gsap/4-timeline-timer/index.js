@@ -1,4 +1,4 @@
-const tl = gsap.timeline({ repeat: -1 }, 'asda');
+const tl = gsap.timeline({ repeat: -1 }, "asda");
 
 tl.to(".el", {
   rotate: 180,
@@ -12,18 +12,6 @@ tl.to(".el", {
   duration: 1.5,
   ease: "none",
 });
-const ml = gsap.timeline({ repeat: -1 }, 'das');
-ml.to(".el", {
-  x: 10,
-  borderRadius: "50%",
-  duration: 1.5,
-  ease: "none",
-}).to(".el", {
-  x: -10,
-  borderRadius: "50%",
-  duration: 1.5,
-  ease: "none",
-});
 
 const PLAY = document.querySelector(".play");
 const PAUSE = document.querySelector(".pause");
@@ -32,6 +20,7 @@ const REVERSE = document.querySelector(".reverse");
 const TIMER = document.querySelector(".timer");
 const SECOND = document.querySelector(".second");
 const MILLISECOND = document.querySelector(".millisecond");
+const SLIDER = document.querySelector("#slider");
 
 PLAY.addEventListener("click", () => {
   gsap.globalTimeline.play();
@@ -58,5 +47,14 @@ gsap.ticker.add(() => {
   SECOND.innerHTML = second;
   MILLISECOND.innerHTML = millisecond;
 });
+gsap.ticker.add(() => {
+  const duration = tl.duration();
+  if (tl.isActive()) {
+    SLIDER.value = (tl.time() * 100) / duration;
+  }
+});
 
-console.log(gsap.globalTimeline.getChildren());
+SLIDER.addEventListener("input", (e) => {
+  const timePosition = (3 * SLIDER.value) / 100;
+  tl.seek(timePosition);
+});

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress Bar with Handle</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f5f5f5;
+      }
+
+      .progress-container {
+        width: 80%;
+        max-width: 600px;
+        margin-bottom: 20px;
+      }
+
+      .progress-bar {
+        position: relative;
+        width: 100%;
+        height: 20px;
+        background-color: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background-color: #4caf50;
+        width: 0;
+        transition: width 0.2s;
+      }
+
+      .progress-handle {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translate(50%, -50%);
+        width: 20px;
+        height: 20px;
+        background-color: #4caf50;
+        border-radius: 50%;
+        cursor: pointer;
+        pointer-events: none;
+      }
+
+      input[type="range"] {
+        width: 80%;
+        max-width: 600px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+        <div class="progress-handle"></div>
+      </div>
+    </div>
+
+    <input type="range" id="slider" min="0" max="100" value="0" />
+
+    <script>
+      const slider = document.getElementById("slider");
+      const progressFill = document.querySelector(".progress-fill");
+      const progressHandle = document.querySelector(".progress-handle");
+
+      slider.addEventListener("input", () => {
+        const value = slider.value;
+
+        // Update the width of the progress bar
+        progressFill.style.width = `${value}%`;
+
+        // Move the handle
+        const progressBarWidth =
+          document.querySelector(".progress-bar").offsetWidth;
+        const handlePosition = (progressBarWidth * value) / 100 - 10; // Adjust for handle width
+        progressHandle.style.transform = `translate(${handlePosition}px, -50%)`;
+      });
+    </script>
+  </body>
+</html>

@@ -77,11 +77,47 @@ body {
   position: relative;
 }
 .millisecond::before {
-    content: 'milliseconds';
-    position: absolute;
-    width: 70px;
-    height: 15px;
-    top: -20px;
-    font-size: 13px;
-    background-color: rgba(201, 231, 221, 0.466);
+  content: "milliseconds";
+  position: absolute;
+  width: 70px;
+  height: 15px;
+  top: -20px;
+  font-size: 13px;
+  background-color: rgba(201, 231, 221, 0.466);
+}
+.progress {
+  width: 60%;
+  padding: 5px;
+  border-radius: 15px;
+  background-color: darkolivegreen;
+  border: 1px solid black;
+  margin: 10px auto;
+}
+
+.track {
+  width: 80%;
+  height: 15px;
+  background-color: floralwhite;
+  border-radius: 8px;
+  margin: auto;
+  position: relative;
+}
+
+.bar {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 1px solid #0000006c;
+  background-color: burlywood;
+}
+
+input[type="range"] {
+  width: 80%;
+  max-width: 600px;
+  margin-top: 20px;
 }
