@@ -13,14 +13,12 @@ tl.to(".el", {
   ease: "none",
 });
 
-const PLAY = document.querySelector(".play");
-const PAUSE = document.querySelector(".pause");
-const RESTART = document.querySelector(".restart");
-const REVERSE = document.querySelector(".reverse");
-const TIMER = document.querySelector(".timer");
-const SECOND = document.querySelector(".second");
-const MILLISECOND = document.querySelector(".millisecond");
-const SLIDER = document.querySelector("#slider");
+const PLAY = document.querySelector("#play");
+const PAUSE = document.querySelector("#pause");
+const RESTART = document.querySelector("#restart");
+const REVERSE = document.querySelector("#reverse");
+const TIME = document.querySelector(".time");
+const SLIDER = document.querySelector('#slider')
 
 PLAY.addEventListener("click", () => {
   gsap.globalTimeline.play();
@@ -44,8 +42,7 @@ gsap.ticker.add(() => {
     .toString()
     .padStart(3, "0");
 
-  SECOND.innerHTML = second;
-  MILLISECOND.innerHTML = millisecond;
+  TIME.innerHTML = `${second} : ${millisecond}`
 });
 gsap.ticker.add(() => {
   const duration = tl.duration();

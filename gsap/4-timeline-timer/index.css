@@ -30,94 +30,44 @@ body {
   height: 50px;
 }
 
-.timer {
-  border-radius: 12px;
-  background-color: burlywood;
-  border: 1px solid darkgoldenrod;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin: 5px auto;
-  padding: 50px;
+.time {
+  letter-spacing: -1px;
+  padding: 2px;
+  background-color: wheat;
+  border-radius: 5px;
 }
-
-.second {
-  width: 50px;
-  height: 30px;
-  background-color: rgb(120, 161, 58);
-  border: 1px solid darkgoldenrod;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  position: relative;
-}
-.second::before {
-  content: "seconds";
-  position: absolute;
-  width: 50px;
-  height: 15px;
-  top: -20px;
-  font-size: 13px;
-  background-color: rgba(201, 231, 221, 0.466);
-}
-.millisecond {
-  width: 70px;
-  height: 30px;
-  background-color: rgb(132, 163, 85);
-  border: 1px solid darkgoldenrod;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  position: relative;
-}
-.millisecond::before {
-  content: "milliseconds";
-  position: absolute;
-  width: 70px;
-  height: 15px;
-  top: -20px;
-  font-size: 13px;
-  background-color: rgba(201, 231, 221, 0.466);
-}
-.progress {
+.controls {
   width: 60%;
   padding: 5px;
+  padding-top: 20px;
   border-radius: 15px;
   background-color: darkolivegreen;
   border: 1px solid black;
   margin: 10px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
 }
-
-.track {
-  width: 80%;
-  height: 15px;
-  background-color: floralwhite;
-  border-radius: 8px;
-  margin: auto;
-  position: relative;
+.control {
+  border-radius: 5px;
+  outline: none;
+  border: none;
 }
-
-.bar {
-  display: block;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  transform: translate(0, -50%);
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  border: 1px solid #0000006c;
-  background-color: burlywood;
+.control:hover {
+  cursor: pointer;
+  box-shadow: 0 0 4px #ccc;
 }
-
 input[type="range"] {
   width: 80%;
   max-width: 600px;
-  margin-top: 20px;
+  margin: auto;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
