@@ -29,3 +29,59 @@ body {
   width: 50px;
   height: 50px;
 }
+
+.timer {
+  border-radius: 12px;
+  background-color: burlywood;
+  border: 1px solid darkgoldenrod;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin: 5px auto;
+  padding: 50px;
+}
+
+.second {
+  width: 50px;
+  height: 30px;
+  background-color: rgb(120, 161, 58);
+  border: 1px solid darkgoldenrod;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  position: relative;
+}
+.second::before {
+  content: "seconds";
+  position: absolute;
+  width: 50px;
+  height: 15px;
+  top: -20px;
+  font-size: 13px;
+  background-color: rgba(201, 231, 221, 0.466);
+}
+.millisecond {
+  width: 70px;
+  height: 30px;
+  background-color: rgb(132, 163, 85);
+  border: 1px solid darkgoldenrod;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  position: relative;
+}
+.millisecond::before {
+    content: 'milliseconds';
+    position: absolute;
+    width: 70px;
+    height: 15px;
+    top: -20px;
+    font-size: 13px;
+    background-color: rgba(201, 231, 221, 0.466);
+}

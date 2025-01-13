@@ -33,6 +33,7 @@ const PLAY = document.querySelector(".play");
 const PAUSE = document.querySelector(".pause");
 const RESTART = document.querySelector(".restart");
 const REVERSE = document.querySelector(".reverse");
+const TIMER = document.querySelector(".timer");
 
 PLAY.addEventListener("click", () => {
   gsap.globalTimeline.play();
@@ -45,4 +46,13 @@ RESTART.addEventListener("click", () => {
 });
 REVERSE.addEventListener("click", () => {
   gsap.globalTimeline.reverse();
+});
+
+gsap.ticker.add(() => {
+  const time = tl.time();
+  const fraction = time % 1;
+
+  const seconds = Math.floor(time);
+  const milliseconds = fraction * 1000;
+  console.log(seconds, milliseconds);
 });
