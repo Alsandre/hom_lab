@@ -36,38 +36,3 @@ body {
   background-color: wheat;
   border-radius: 5px;
 }
-.controls {
-  width: 60%;
-  padding: 5px;
-  padding-top: 20px;
-  border-radius: 15px;
-  background-color: darkolivegreen;
-  border: 1px solid black;
-  margin: 10px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 5px;
-}
-.control {
-  border-radius: 5px;
-  outline: none;
-  border: none;
-}
-.control:hover {
-  cursor: pointer;
-  box-shadow: 0 0 4px #ccc;
-}
-input[type="range"] {
-  width: 80%;
-  max-width: 600px;
-  margin: auto;
-}
-
-.actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-}
