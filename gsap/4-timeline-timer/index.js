@@ -4,12 +4,11 @@ const html = `
   <div class="actions">
     <button class="control" id="play">Play</button>
     <button class="control" id="pause">Pause</button>
-    <button class="control" id="reverse">Reverse</button>
     <button class="control" id="restart">Restart</button>
     <span class="time" draggable="true"></span>
   </div>
 </div>`;
-document.body.insertAdjacentHTML('beforeend',html)
+document.body.insertAdjacentHTML("beforeend", html);
 const styles = `
 .controls {
   box-sizing: border-box;
@@ -33,6 +32,7 @@ const styles = `
 }
 .control {
   border-radius: 5px;
+  padding: 4px;
   outline: none;
   border: none;
 }
@@ -51,7 +51,7 @@ input[type="range"] {
   align-items: center;
   gap: 5px;
 }`;
-const styleTag = document.createElement('style');
+const styleTag = document.createElement("style");
 styleTag.textContent = styles;
 
 document.head.appendChild(styleTag);
@@ -59,7 +59,6 @@ document.head.appendChild(styleTag);
 const PLAY = document.querySelector("#play");
 const PAUSE = document.querySelector("#pause");
 const RESTART = document.querySelector("#restart");
-const REVERSE = document.querySelector("#reverse");
 const TIME = document.querySelector(".time");
 const SLIDER = document.querySelector("#slider");
 
@@ -72,29 +71,60 @@ PAUSE.addEventListener("click", () => {
 RESTART.addEventListener("click", () => {
   gsap.globalTimeline.restart();
 });
-REVERSE.addEventListener("click", () => {
-  gsap.globalTimeline.reverse();
-});
 
+const mainTimeline = getMainTimeline();
 gsap.ticker.add(() => {
-  const time = tl.time();
+  const time = mainTimeline.time();
   const fraction = time % 1;
 
   const second = Math.floor(time);
   const millisecond = Math.floor(fraction * 1000)
     .toString()
     .padStart(3, "0");
-
   TIME.innerHTML = `${second} : ${millisecond}`;
 });
 gsap.ticker.add(() => {
-  const duration = tl.duration();
-  if (tl.isActive()) {
-    SLIDER.value = (tl.time() * 100) / duration;
+  const duration = mainTimeline.duration();
+  if (mainTimeline.isActive()) {
+    SLIDER.value = (mainTimeline.time() * 100) / duration;
   }
 });
 
 SLIDER.addEventListener("input", (e) => {
   const timePosition = (3 * SLIDER.value) / 100;
-  tl.seek(timePosition);
+  mainTimeline.seek(timePosition);
+});
+
+console.log(gsap.globalTimeline.getChildren());
+
+function getMainTimeline() {
+  const topLevelTimelines = gsap.globalTimeline
+    .getChildren()
+    .filter((tl) => !tl.parent || tl.parent === gsap.globalTimeline);
+  if (topLevelTimelines.length > 0) {
+    const mainTimeline = topLevelTimelines[0]; // Assuming the first top-level timeline is the main one
+    const duration = mainTimeline.duration();
+    console.log("Main timeline duration:", duration);
+    return mainTimeline;
+  } else {
+    console.log("No main timeline found.");
+    return 0;
+  }
+}
+
+function toggleGSAPAnimations() {
+  if (gsap.globalTimeline.paused()) {
+    gsap.globalTimeline.resume();
+    console.log("GSAP Animations Resumed");
+  } else {
+    gsap.globalTimeline.pause();
+    console.log("Paused at time:", globalSequence.time());
+    console.log("GSAP Animations Paused");
+  }
+}
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    event.preventDefault();
+    toggleGSAPAnimations();
+  }
 });
