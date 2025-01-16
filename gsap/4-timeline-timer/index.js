@@ -1,3 +1,4 @@
+// CONTROL PANEL MARKUP
 const html = `
 <div class="controls">
   <input type="range" id="slider" min="0" max="100" value="0" />
@@ -9,6 +10,8 @@ const html = `
   </div>
 </div>`;
 document.body.insertAdjacentHTML("beforeend", html);
+
+// CONTROL PANEL STYLEs
 const styles = `
 .controls {
   box-sizing: border-box;
@@ -29,6 +32,7 @@ const styles = `
   justify-content: center;
   flex-direction: column;
   gap: 5px;
+  z-index: 99999;
 }
 .control {
   border-radius: 5px;
@@ -53,26 +57,41 @@ input[type="range"] {
 }`;
 const styleTag = document.createElement("style");
 styleTag.textContent = styles;
-
 document.head.appendChild(styleTag);
 
+// ACTION ELEMENTS
 const PLAY = document.querySelector("#play");
 const PAUSE = document.querySelector("#pause");
 const RESTART = document.querySelector("#restart");
 const TIME = document.querySelector(".time");
 const SLIDER = document.querySelector("#slider");
+// EXTRACTING TIMELINE FROM GLOBAL GSAP OBJECT
+const mainTimeline = getMainTimeline();
 
+// SETTING UP LISTENERS
 PLAY.addEventListener("click", () => {
+  console.log("play");
   gsap.globalTimeline.play();
 });
 PAUSE.addEventListener("click", () => {
+  console.log("pause");
   gsap.globalTimeline.pause();
 });
 RESTART.addEventListener("click", () => {
-  gsap.globalTimeline.restart();
+  console.log("restart");
+  gsap.globalTimeline.revert();
 });
-
-const mainTimeline = getMainTimeline();
+SLIDER.addEventListener("input", (e) => {
+  const animDuration = mainTimeline.duration();
+  const timePosition = (animDuration * SLIDER.value) / 100;
+  mainTimeline.seek(timePosition);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.code === "Space") {
+    event.preventDefault();
+    toggleGSAPAnimations();
+  }
+});
 gsap.ticker.add(() => {
   const time = mainTimeline.time();
   const fraction = time % 1;
@@ -90,19 +109,13 @@ gsap.ticker.add(() => {
   }
 });
 
-SLIDER.addEventListener("input", (e) => {
-  const timePosition = (3 * SLIDER.value) / 100;
-  mainTimeline.seek(timePosition);
-});
-
-console.log(gsap.globalTimeline.getChildren());
-
+// HELPER FUNCTIONS
 function getMainTimeline() {
   const topLevelTimelines = gsap.globalTimeline
     .getChildren()
     .filter((tl) => !tl.parent || tl.parent === gsap.globalTimeline);
   if (topLevelTimelines.length > 0) {
-    const mainTimeline = topLevelTimelines[0]; // Assuming the first top-level timeline is the main one
+    const mainTimeline = topLevelTimelines[0];
     const duration = mainTimeline.duration();
     console.log("Main timeline duration:", duration);
     return mainTimeline;
@@ -117,14 +130,8 @@ function toggleGSAPAnimations() {
     gsap.globalTimeline.resume();
     console.log("GSAP Animations Resumed");
   } else {
+    console.log("resume");
     gsap.globalTimeline.pause();
-    console.log("Paused at time:", globalSequence.time());
-    console.log("GSAP Animations Paused");
+    console.log("Paused at time:", mainTimeline.time());
   }
 }
-document.addEventListener("keydown", (event) => {
-  if (event.code === "Space") {
-    event.preventDefault();
-    toggleGSAPAnimations();
-  }
-});
