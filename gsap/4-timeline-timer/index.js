@@ -1,6 +1,6 @@
 // CONTROL PANEL MARKUP
 const html = `
-<div class="controls">
+<div class="controls" id="panel" draggable>
   <input type="range" id="slider" min="0" max="100" value="0" />
   <div class="actions">
     <button class="control" id="play">Play</button>
@@ -15,9 +15,9 @@ document.body.insertAdjacentHTML("beforeend", html);
 const styles = `
 .controls {
   box-sizing: border-box;
-  position: absolute;
-  bottom: 0;
-  right: 1%;
+  position: fixed;
+  top: 85%;
+  left: 50%;
   width: 30%;
   max-width: 600px;
   height: 70px;
@@ -60,6 +60,7 @@ styleTag.textContent = styles;
 document.head.appendChild(styleTag);
 
 // ACTION ELEMENTS
+const PANEL = document.querySelector("#panel");
 const PLAY = document.querySelector("#play");
 const PAUSE = document.querySelector("#pause");
 const RESTART = document.querySelector("#restart");
@@ -107,6 +108,36 @@ gsap.ticker.add(() => {
   if (mainTimeline.isActive()) {
     SLIDER.value = (mainTimeline.time() * 100) / duration;
   }
+});
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+
+PANEL.addEventListener("pointerdown", (event) => {
+  isDragging = true;
+  startX = event.clientX;
+  startY = event.clientY;
+  PANEL.style.transition = "none"; // Remove smooth transitions while dragging
+});
+
+document.addEventListener("pointermove", (event) => {
+  if (!isDragging) return;
+
+  const xDiff = event.clientX - startX;
+  const yDiff = event.clientY - startY;
+  const curTop = parseFloat(window.getComputedStyle(PANEL).top);
+  const curLeft = parseFloat(window.getComputedStyle(PANEL).left);
+  const newTop = `${curTop + yDiff}px`;
+  const newLeft = `${curLeft + xDiff}px`;
+  PANEL.style.left = newLeft;
+  PANEL.style.top = newTop;
+  startX = event.clientX;
+  startY = event.clientY;
+});
+
+document.addEventListener("pointerup", () => {
+  isDragging = false;
+  PANEL.style.transition = ""; // Restore smooth transitions after dragging
 });
 
 // HELPER FUNCTIONS
