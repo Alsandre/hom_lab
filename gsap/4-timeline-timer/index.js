@@ -123,14 +123,24 @@ PANEL.addEventListener("pointerdown", (event) => {
 document.addEventListener("pointermove", (event) => {
   if (!isDragging) return;
 
+  // CALCULATING MOUSE MOVEMENT
   const xDiff = event.clientX - startX;
   const yDiff = event.clientY - startY;
+  // SAVING CURRENT POSITION
   const curTop = parseFloat(window.getComputedStyle(PANEL).top);
   const curLeft = parseFloat(window.getComputedStyle(PANEL).left);
-  const newTop = `${curTop + yDiff}px`;
-  const newLeft = `${curLeft + xDiff}px`;
+  // CALCULATING PANEL MOVEMENT BOUNDARIES
+  const maxLeft = window.innerWidth - PANEL.offsetWidth;
+  const maxTop = window.innerHeight - PANEL.offsetHeight;
+  //   CALCULATING PANEL'S NEW POSITION
+  const newLeft = `${Math.max(0, Math.min(curLeft + xDiff, maxLeft))}px`;
+  const newTop = `${Math.max(0, Math.min(curTop + yDiff, maxTop))}px`;
+
+  //   APPLY MOVEMENT
   PANEL.style.left = newLeft;
   PANEL.style.top = newTop;
+
+  // UPDATE VARIABLE FOR NEXT MOVEMENT
   startX = event.clientX;
   startY = event.clientY;
 });
@@ -138,6 +148,11 @@ document.addEventListener("pointermove", (event) => {
 document.addEventListener("pointerup", () => {
   isDragging = false;
   PANEL.style.transition = ""; // Restore smooth transitions after dragging
+});
+
+document.addEventListener("pointercancel", () => {
+  isDragging = false;
+  PANEL.style.transition = ""; // Restore smooth transitions if drag is canceled
 });
 
 // HELPER FUNCTIONS
